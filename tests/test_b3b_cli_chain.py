@@ -885,6 +885,29 @@ def test_the_demo_script_itself_runs_green(tmp_path: Path):
     assert erwartet == tatsaechlich > 0, (erwartet, tatsaechlich)
 
 
+def test_demo_uses_project_environment_when_path_python_has_no_dependencies(tmp_path: Path):
+    """A clean system Python must not replace the installed project environment."""
+    import subprocess
+    import venv
+
+    bare = tmp_path / "bare-python"
+    venv.EnvBuilder(with_pip=False).create(bare)
+    subprocess.run(
+        [
+            str(bare / "bin/python"),
+            "-c",
+            "import importlib.util; assert importlib.util.find_spec('cryptography') is None",
+        ],
+        check=True,
+        capture_output=True,
+    )
+    result = _lauf(tmp_path, pfad_voran=bare / "bin", OHPIPE_DURCHSTICH_PYTHON="")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "Durchstich vollstaendig." in result.stdout
+    expected_python = str(DURCHSTICH.parents[2] / ".venv/bin/python")
+    assert f"Baum ({expected_python} -m ohpipe.cli.main)" in result.stdout
+
+
 def test_the_demo_script_never_waits_unless_it_is_told_to(tmp_path: Path):
     """Haltepunkte sind fuer den Vorfuehrenden, nicht fuer die Suite.
 

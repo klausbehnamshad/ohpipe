@@ -3,6 +3,7 @@
 ## 0.1.0a1 — public preview candidate, 2026-09-13
 
 - Introduce a public checkout with a synthetic demonstration and documented scope.
+- Prefer the installed project environment for the demo and check CLI dependencies before starting the workflow.
 - Prevent unauthenticated disposition events from conferring exclusion.
 - Require previously produced artifact bytes before an anchor outcome can bind.
 - Check artifact membership in the profile graph before record exclusion takes effect.

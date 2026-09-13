@@ -68,18 +68,20 @@ trap aufraeumen EXIT
 # Fassung.
 export PYTHONPATH="$REPO/src${PYTHONPATH:+:$PYTHONPATH}"
 
+# Die Projektumgebung enthält die im Schnellstart installierten Abhängigkeiten
+# und hat deshalb Vorrang vor einem System-Python auf dem PATH.
 # Welcher Interpreter — der Nachweis statt der Absicht. Gesucht wird der erste,
-# der `ohpipe` AUS DIESEM BAUM tatsächlich lädt; gefragt wird er selbst, nicht
+# der die CLI samt Abhängigkeiten AUS DIESEM BAUM lädt; gefragt wird er selbst, nicht
 # seine Versionsnummer. Damit hängt die Vorführung weder am PATH-Eintrag
 # `ohpipe` noch daran, welches python3 zuerst gefunden wird: ein 3.10 oder ein
 # 3.9 fällt hier durch (src/ohpipe/__init__.py hält ab 3.11), und der nächste
 # Kandidat kommt dran. Überschreibbar mit OHPIPE_DURCHSTICH_PYTHON.
 PYTHON=""
 LETZTER=""
-for kandidat in "${OHPIPE_DURCHSTICH_PYTHON:-}" python3 python3.13 python3.12 python3.11; do
+for kandidat in "${OHPIPE_DURCHSTICH_PYTHON:-}" "$REPO/.venv/bin/python" python3 python3.13 python3.12 python3.11; do
   [ -n "$kandidat" ] || continue
   command -v "$kandidat" > /dev/null 2>&1 || continue
-  if MODUL="$("$kandidat" -c 'import ohpipe, pathlib; print(pathlib.Path(ohpipe.__file__).resolve().parent)' 2>&1)"; then
+  if MODUL="$("$kandidat" -c 'import ohpipe.cli.main, pathlib; print(pathlib.Path(ohpipe.__file__).resolve().parent)' 2>&1)"; then
     PYTHON="$kandidat"
     break
   fi
