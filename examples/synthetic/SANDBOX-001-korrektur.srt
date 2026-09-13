@@ -1,0 +1,30 @@
+1
+00:00:00,100 --> 00:00:00,400
+INTERVIEWER: So, das Band läuft.
+
+2
+00:00:00,500 --> 00:00:05,200
+INTERVIEWER: Erzählen Sie mir bitte, wie der Schulweg damals aussah.
+
+3
+00:00:05,250 --> 00:00:05,550
+INTERVIEWER: Erzählen Sie mir bitte, wie der Schulweg damals aussah.
+
+4
+00:00:05,600 --> 00:00:13,400
+ZEITZEUGIN: Wir sind jeden Morgen zu Fuß gegangen, auch im Winter,
+und das waren gut vierzig Minuten in eine Richtung.
+
+5
+00:00:14,000 --> 00:00:21,800
+ZEITZEUGIN: D'Iesse war knapp, mä et gouf ëmmer eppes.
+Meine Mutter hat das irgendwie hinbekommen.
+
+6
+00:00:22,300 --> 00:00:29,900
+INTERVIEWER: Et quand le bus est arrivé, qu'est-ce qui a changé pour vous?
+
+7
+00:00:30,400 --> 00:00:39,100
+ZEITZEUGIN: Später kam der Bus, das war eine große Erleichterung.
+Danach wurde vieles anders, was wir aber erst sehr viel später verstanden haben.

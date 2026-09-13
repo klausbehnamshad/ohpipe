@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://doi.org/10.5281/zenodo.20507329/schema/core.schema.json",
+  "title": "IMM-Core: Interview Metadata Model — Core Profile",
+  "description": "IMM-Core v1.0. Generic, discipline-agnostic metadata schema for interview-based qualitative research. Implementation Profiles (e.g. IMM-Profile-LuxOH, IMM-Profile-Migration) extend this Core without weakening its constraints. Block D (preservation fields) and full speaker components are deferred to Phase 2. Single source of truth: tap/core.csv.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "description": "Block A. Stable identifier. Recommended format: YYYY-MM-DD_{INSTITUTION_CODE}_{NNNN}. Pattern not enforced at Core; see Implementation Profile for institution-specific constraints."
+    },
+    "interview_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Block A. ISO 8601 interview date (YYYY-MM-DD)."
+    },
+    "interviewer": {
+      "type": "string",
+      "description": "Block A. Name of interviewer. ORCID may follow in parentheses, e.g. 'Jane Smith (0000-0001-2345-6789)'."
+    },
+    "consent_status": {
+      "type": "string",
+      "description": "Block A. GDPR-based consent category. Free string at Core; see vocabs/consent_status.md for recommended vocabulary. Implementation Profiles may impose a controlled enum."
+    },
+    "accessRights": {
+      "type": "string",
+      "enum": ["open", "restricted", "closed"],
+      "description": "Block A. Repository-level access rights. Uses cross-domain OpenAIRE/Zenodo/DataCite terms."
+    },
+    "title": {
+      "type": "string",
+      "description": "Block B. Interview title or descriptive label."
+    },
+    "interviewee_display": {
+      "type": "string",
+      "description": "Block B. Pseudonym or display name. Core-level minimal speaker hook. Full speaker component deferred to Phase 2."
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{3}$",
+      "description": "Block B. ISO 639-3 three-letter language code, e.g. 'eng', 'deu', 'fra'. Single language only at Core; multilingual interviews deferred to Phase 2."
+    },
+    "spatial": {
+      "type": "string",
+      "description": "Block B. Place of interview. Free string at Core; recommend using a controlled vocabulary appropriate to the discipline and geography."
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Block B. Subject keywords. Free string array at Core; profiles SHOULD specify a controlled vocabulary."
+    },
+    "abstract": {
+      "type": "string",
+      "description": "Block B. Short descriptive (non-analytic) summary, 2–3 sentences. Describes the interview as a research object. See methodological-positions/abstracts.md."
+    },
+    "timecoded_segments": {
+      "type": "array",
+      "description": "Block C. Array of segment objects with required sub-properties.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "start": {
+            "type": "string",
+            "pattern": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$",
+            "description": "Segment start time in HH:MM:SS."
+          },
+          "end": {
+            "type": "string",
+            "pattern": "^[0-9]{2}:[0-9]{2}:[0-9]{2}$",
+            "description": "Segment end time in HH:MM:SS."
+          },
+          "label": {
+            "type": "string",
+            "description": "Descriptive label for the segment."
+          }
+        },
+        "required": ["start", "end", "label"]
+      }
+    },
+    "related_materials": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Block C. URLs or persistent identifiers (DOI, handle) of related materials — transcripts, companion documents, derived files."
+    }
+  },
+  "required": [
+    "record_id",
+    "interview_date",
+    "interviewer",
+    "consent_status",
+    "accessRights",
+    "title",
+    "language"
+  ]
+}

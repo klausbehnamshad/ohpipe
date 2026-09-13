@@ -1,0 +1,65 @@
+name: Preview checks
+"on": [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install '.[dev]' build
+      - name: Full suite, including known historical failures
+        run: .venv/bin/python -m pytest --ignore=tests/test_ollama_live.py --tb=short --basetemp="$RUNNER_TEMP/ohpipe-pytest"
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install '.[dev]' build
+      - name: Lint all shipped Python directories
+        run: .venv/bin/ruff check src tests tools
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install '.[dev]' build
+      - name: Build distribution
+        run: .venv/bin/python -m build
+      - name: Install and run away from the checkout
+        run: |
+          python -m venv "$RUNNER_TEMP/ohpipe-wheel"
+          "$RUNNER_TEMP/ohpipe-wheel/bin/python" -m pip install dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/ohpipe-wheel/bin/ohpipe" --help
+          "$RUNNER_TEMP/ohpipe-wheel/bin/python" -c 'from ohpipe.policies.metadata import load_tap; assert len(load_tap()) == 13'
+      - name: Synthetic workflow
+        run: bash examples/synthetic/durchstich.sh

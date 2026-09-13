@@ -1,0 +1,1323 @@
+{
+  "reference_commit": "4c1bdaf75e18bbeb678d1b41df66955aa58e83ea",
+  "reference_source_sha256": "19d7d26b46740a4c7d15a44357c0ad51ee7ec2d289cd6a27f563eb4d8f4afa32",
+  "scope": "Historical graph and executable profile fields. Comments and descriptions are excluded from behavior comparison.",
+  "profiles": {
+    "sandbox": {
+      "profile": {
+        "id": "sandbox",
+        "record_prefix": "SANDBOX",
+        "record_digits": 3,
+        "languages": [
+          "de",
+          "fr",
+          "lb",
+          "pt"
+        ],
+        "processing_routes": [
+          "local"
+        ],
+        "coding_mode": "descriptive_l1",
+        "coverage_threshold": 0.75,
+        "export_targets": [
+          "webvtt",
+          "json"
+        ],
+        "consent_vocabulary": [
+          "research-only",
+          "public"
+        ],
+        "model_vocabulary": [
+          "fixture:descriptive-l1",
+          "mistral:7b-instruct"
+        ],
+        "key_required": false,
+        "pseudonymisation_required": false,
+        "production": false,
+        "legacy_runtime": ""
+      },
+      "graph": {
+        "contracts": {
+          "abstract.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "abstract.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "analysis.approved": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "analysis.bundle": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "analysis.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "analysis.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "export.bundle": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "l1.adjudicated": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "l1.coverage": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "l1.suggestions": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "metadata.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "metadata.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "release.approved": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "release.preview": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "transcript.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "transcript.revision": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": false,
+            "text_profile": "nfc-strict-v1"
+          }
+        },
+        "steps": [
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "SRT/VTT/DOCX/TXT -> TranscriptRevision (inhaltsadressiert)",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "ingest",
+            "produces": [
+              "transcript.revision"
+            ],
+            "reads_text": null,
+            "requires": []
+          },
+          {
+            "confirms": "transcript.revision",
+            "cost": "human",
+            "description": "Der Mensch best\u00e4tigt die Fassung, auf die Anker zeigen werden",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "transcript.confirm",
+            "produces": [
+              "transcript.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.revision"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "model",
+            "description": "Deskriptive L1-Vorschl\u00e4ge, lokal; Beleg statt Regeneration",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "model",
+            "leaves_system": false,
+            "name": "l1.suggest",
+            "produces": [
+              "l1.suggestions"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Coverage aus den Ankerspannen; Gate, keine Kennzahl",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "l1.coverage",
+            "produces": [
+              "l1.coverage"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.suggestions",
+              "transcript.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Unit-Review: annehmen, \u00e4ndern, verwerfen",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "l1.review",
+            "produces": [
+              "l1.adjudicated"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.suggestions",
+              "l1.coverage"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Kontrollierte deskriptive Felder \u2014 eigene Datei, nie in die best\u00e4tigte (ADR 0005)",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "metadata.derive",
+            "produces": [
+              "metadata.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Kontrollierte Felder setzt nur ein Mensch",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "metadata.confirm",
+            "produces": [
+              "metadata.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "metadata.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Deskriptiver Katalogabstract, Block B des Metadata Model",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "abstract.derive",
+            "produces": [
+              "abstract.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated",
+              "metadata.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Der Mensch ordnet zu: geh\u00f6rt das hierhin oder in die Analysezusammenfassung?",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "abstract.confirm",
+            "produces": [
+              "abstract.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "abstract.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "model",
+            "description": "Analysezusammenfassung \u2014 ausdr\u00fccklich Interpretation, eigener Pfad",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "model",
+            "leaves_system": false,
+            "name": "analysis.summarise",
+            "produces": [
+              "analysis.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Eigene Entscheidung, eigene Bytes \u2014 nicht dieselbe wie beim Abstract",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "analysis.confirm",
+            "produces": [
+              "analysis.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Vorschau des Katalogartefakts. Die Analyse ist NICHT enthalten",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "release.preview",
+            "produces": [
+              "release.preview"
+            ],
+            "reads_text": null,
+            "requires": [
+              "metadata.confirmed",
+              "abstract.confirmed",
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Beleg auf genau die freizugebenden Bytes",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "release.approve",
+            "produces": [
+              "release.approved"
+            ],
+            "reads_text": null,
+            "requires": [
+              "release.preview"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Eigene Freigabe f\u00fcr den Analysepfad (ADR 0020)",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "analysis.approve",
+            "produces": [
+              "analysis.approved"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Analyseausgang \u2014 getrennt vom Katalog, als Interpretation markiert",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "egress",
+            "leaves_system": true,
+            "name": "analysis.export",
+            "produces": [
+              "analysis.bundle"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.approved"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "WebVTT/JSON/OHMS/DC \u2014 Formatadapter, getrennt von der Freigabepolicy",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "egress",
+            "leaves_system": true,
+            "name": "export",
+            "produces": [
+              "export.bundle"
+            ],
+            "reads_text": null,
+            "requires": [
+              "release.approved"
+            ]
+          }
+        ]
+      },
+      "historical_profile_sha256": "1f23a14d486b784796eee19fc7f348d29e412d4c1ea1461e7389ee4d95a8ca0d"
+    },
+    "walz": {
+      "profile": {
+        "id": "walz",
+        "record_prefix": "WALZ",
+        "record_digits": 4,
+        "languages": [
+          "de",
+          "fr",
+          "lb",
+          "en"
+        ],
+        "processing_routes": [
+          "local"
+        ],
+        "coding_mode": "descriptive_l1",
+        "codebook": "",
+        "coverage_threshold": 0.9,
+        "export_targets": [
+          "webvtt",
+          "json"
+        ],
+        "consent_vocabulary": [
+          "research-only",
+          "teaching",
+          "public",
+          "embargoed"
+        ],
+        "model_vocabulary": [
+          "mistral:7b-instruct"
+        ],
+        "key_required": true,
+        "pseudonymisation_required": false,
+        "production": true,
+        "legacy_runtime": ""
+      },
+      "graph": {
+        "contracts": {
+          "abstract.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "abstract.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "analysis.approved": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "analysis.bundle": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "analysis.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "analysis.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "export.bundle": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "l1.adjudicated": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "l1.coverage": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "l1.suggestions": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "metadata.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "metadata.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "release.approved": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "release.preview": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "transcript.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "transcript.revision": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": false,
+            "text_profile": "nfc-strict-v1"
+          }
+        },
+        "steps": [
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "SRT/VTT/DOCX/TXT -> TranscriptRevision (inhaltsadressiert)",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "ingest",
+            "produces": [
+              "transcript.revision"
+            ],
+            "reads_text": null,
+            "requires": []
+          },
+          {
+            "confirms": "transcript.revision",
+            "cost": "human",
+            "description": "Der Mensch best\u00e4tigt die Fassung, auf die Anker zeigen werden",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "transcript.confirm",
+            "produces": [
+              "transcript.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.revision"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "model",
+            "description": "Deskriptive L1-Vorschl\u00e4ge, lokal; Beleg statt Regeneration",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "model",
+            "leaves_system": false,
+            "name": "l1.suggest",
+            "produces": [
+              "l1.suggestions"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Coverage aus den Ankerspannen; Gate, keine Kennzahl",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "l1.coverage",
+            "produces": [
+              "l1.coverage"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.suggestions",
+              "transcript.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Unit-Review: annehmen, \u00e4ndern, verwerfen",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "l1.review",
+            "produces": [
+              "l1.adjudicated"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.suggestions",
+              "l1.coverage"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Kontrollierte deskriptive Felder \u2014 eigene Datei, nie in die best\u00e4tigte (ADR 0005)",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "metadata.derive",
+            "produces": [
+              "metadata.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Kontrollierte Felder setzt nur ein Mensch",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "metadata.confirm",
+            "produces": [
+              "metadata.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "metadata.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Deskriptiver Katalogabstract, Block B des Metadata Model",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "abstract.derive",
+            "produces": [
+              "abstract.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated",
+              "metadata.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Der Mensch ordnet zu: geh\u00f6rt das hierhin oder in die Analysezusammenfassung?",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "abstract.confirm",
+            "produces": [
+              "abstract.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "abstract.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "model",
+            "description": "Analysezusammenfassung \u2014 ausdr\u00fccklich Interpretation, eigener Pfad",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "model",
+            "leaves_system": false,
+            "name": "analysis.summarise",
+            "produces": [
+              "analysis.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Eigene Entscheidung, eigene Bytes \u2014 nicht dieselbe wie beim Abstract",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "analysis.confirm",
+            "produces": [
+              "analysis.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Vorschau des Katalogartefakts. Die Analyse ist NICHT enthalten",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "release.preview",
+            "produces": [
+              "release.preview"
+            ],
+            "reads_text": null,
+            "requires": [
+              "metadata.confirmed",
+              "abstract.confirmed",
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Beleg auf genau die freizugebenden Bytes",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "release.approve",
+            "produces": [
+              "release.approved"
+            ],
+            "reads_text": null,
+            "requires": [
+              "release.preview"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Eigene Freigabe f\u00fcr den Analysepfad (ADR 0020)",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "analysis.approve",
+            "produces": [
+              "analysis.approved"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Analyseausgang \u2014 getrennt vom Katalog, als Interpretation markiert",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "egress",
+            "leaves_system": true,
+            "name": "analysis.export",
+            "produces": [
+              "analysis.bundle"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.approved"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "WebVTT/JSON/OHMS/DC \u2014 Formatadapter, getrennt von der Freigabepolicy",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "egress",
+            "leaves_system": true,
+            "name": "export",
+            "produces": [
+              "export.bundle"
+            ],
+            "reads_text": null,
+            "requires": [
+              "release.approved"
+            ]
+          }
+        ]
+      },
+      "historical_profile_sha256": "6a42c42a0df41ad0f556e4894babef6c3d0b4f1ebf49e2d115dfc33778daf05a"
+    },
+    "childlux": {
+      "profile": {
+        "id": "childlux",
+        "record_prefix": "CHILDLUX",
+        "record_digits": 4,
+        "languages": [
+          "de",
+          "fr",
+          "lb",
+          "en"
+        ],
+        "processing_routes": [
+          "local"
+        ],
+        "coding_mode": "descriptive_l1",
+        "coverage_threshold": 0.9,
+        "export_targets": [
+          "webvtt",
+          "json"
+        ],
+        "consent_vocabulary": [
+          "research-only",
+          "teaching",
+          "public",
+          "embargoed"
+        ],
+        "key_required": true,
+        "pseudonymisation_required": true,
+        "pii_detection": "model",
+        "production": true,
+        "model_vocabulary": [],
+        "legacy_runtime": "dinoh"
+      },
+      "graph": {
+        "contracts": {
+          "abstract.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "abstract.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "analysis.approved": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "analysis.bundle": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "analysis.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "analysis.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "export.bundle": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "l1.adjudicated": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "l1.coverage": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "l1.suggestions": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "metadata.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "metadata.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "pii.spans": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "release.approved": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "release.preview": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "replacement.report": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": null
+          },
+          "transcript.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "transcript.pseudonymised.confirmed": {
+            "binding_required": true,
+            "decision_required": true,
+            "provenance_required": false,
+            "text_profile": null
+          },
+          "transcript.pseudonymised.draft": {
+            "binding_required": true,
+            "decision_required": false,
+            "provenance_required": true,
+            "text_profile": "nfc-strict-v1"
+          },
+          "transcript.revision": {
+            "binding_required": false,
+            "decision_required": false,
+            "provenance_required": false,
+            "text_profile": "nfc-strict-v1"
+          }
+        },
+        "steps": [
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "SRT/VTT/DOCX/TXT -> TranscriptRevision (inhaltsadressiert)",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "ingest",
+            "produces": [
+              "transcript.revision"
+            ],
+            "reads_text": null,
+            "requires": []
+          },
+          {
+            "confirms": "transcript.revision",
+            "cost": "human",
+            "description": "Der Mensch best\u00e4tigt die Fassung, auf die Anker zeigen werden",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "transcript.confirm",
+            "produces": [
+              "transcript.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.revision"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "model",
+            "description": "Erkennung ausschlie\u00dflich auf Cue-Payloads (ADR 0024 \u00a71)",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "model",
+            "leaves_system": false,
+            "name": "pii.detect",
+            "produces": [
+              "pii.spans"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Spanbasiert und deterministisch; kein generatives Umschreiben",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "pseudonymise",
+            "produces": [
+              "transcript.pseudonymised.draft",
+              "replacement.report"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.confirmed",
+              "pii.spans"
+            ]
+          },
+          {
+            "confirms": "transcript.pseudonymised.draft",
+            "cost": "human",
+            "description": "Bindet an Ausgabebytes, Quellhash, Beleg und Bericht zugleich",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "pseudonymisation.review",
+            "produces": [
+              "transcript.pseudonymised.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.pseudonymised.draft",
+              "replacement.report"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "model",
+            "description": "Deskriptive L1-Vorschl\u00e4ge, lokal; Beleg statt Regeneration",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "model",
+            "leaves_system": false,
+            "name": "l1.suggest",
+            "produces": [
+              "l1.suggestions"
+            ],
+            "reads_text": null,
+            "requires": [
+              "transcript.pseudonymised.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Coverage aus den Ankerspannen; Gate, keine Kennzahl",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "l1.coverage",
+            "produces": [
+              "l1.coverage"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.suggestions",
+              "transcript.pseudonymised.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Unit-Review: annehmen, \u00e4ndern, verwerfen",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "l1.review",
+            "produces": [
+              "l1.adjudicated"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.suggestions",
+              "l1.coverage"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Kontrollierte deskriptive Felder \u2014 eigene Datei, nie in die best\u00e4tigte (ADR 0005)",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "metadata.derive",
+            "produces": [
+              "metadata.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Kontrollierte Felder setzt nur ein Mensch",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "metadata.confirm",
+            "produces": [
+              "metadata.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "metadata.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Deskriptiver Katalogabstract, Block B des Metadata Model",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "abstract.derive",
+            "produces": [
+              "abstract.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated",
+              "metadata.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Der Mensch ordnet zu: geh\u00f6rt das hierhin oder in die Analysezusammenfassung?",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "abstract.confirm",
+            "produces": [
+              "abstract.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "abstract.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "model",
+            "description": "Analysezusammenfassung \u2014 ausdr\u00fccklich Interpretation, eigener Pfad",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "model",
+            "leaves_system": false,
+            "name": "analysis.summarise",
+            "produces": [
+              "analysis.draft"
+            ],
+            "reads_text": null,
+            "requires": [
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Eigene Entscheidung, eigene Bytes \u2014 nicht dieselbe wie beim Abstract",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "analysis.confirm",
+            "produces": [
+              "analysis.confirmed"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.draft"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Vorschau des Katalogartefakts. Die Analyse ist NICHT enthalten",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "deterministic",
+            "leaves_system": false,
+            "name": "release.preview",
+            "produces": [
+              "release.preview"
+            ],
+            "reads_text": null,
+            "requires": [
+              "metadata.confirmed",
+              "abstract.confirmed",
+              "l1.adjudicated"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Beleg auf genau die freizugebenden Bytes",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "release.approve",
+            "produces": [
+              "release.approved"
+            ],
+            "reads_text": null,
+            "requires": [
+              "release.preview"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "human",
+            "description": "Eigene Freigabe f\u00fcr den Analysepfad (ADR 0020)",
+            "human_gate": true,
+            "idempotent": true,
+            "kind": "human",
+            "leaves_system": false,
+            "name": "analysis.approve",
+            "produces": [
+              "analysis.approved"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.confirmed"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "Analyseausgang \u2014 getrennt vom Katalog, als Interpretation markiert",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "egress",
+            "leaves_system": true,
+            "name": "analysis.export",
+            "produces": [
+              "analysis.bundle"
+            ],
+            "reads_text": null,
+            "requires": [
+              "analysis.approved"
+            ]
+          },
+          {
+            "confirms": null,
+            "cost": "cheap",
+            "description": "WebVTT/JSON/OHMS/DC \u2014 Formatadapter, getrennt von der Freigabepolicy",
+            "human_gate": false,
+            "idempotent": true,
+            "kind": "egress",
+            "leaves_system": true,
+            "name": "export",
+            "produces": [
+              "export.bundle"
+            ],
+            "reads_text": null,
+            "requires": [
+              "release.approved"
+            ]
+          }
+        ]
+      },
+      "historical_profile_sha256": "15a7a02b4dca9dbd819f246de28e223ca11f187a09fee7cb01f7d3f4cf1bdb13"
+    }
+  }
+}

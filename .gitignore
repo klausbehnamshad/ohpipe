@@ -1,0 +1,64 @@
+# Reale Daten und Governance-Zustand liegen NIE hier. Diese Datei ist das Netz,
+# nicht die Trennung — die Trennung ist OHPIPE_DATA_ROOT (ADR 006).
+*.clean.txt
+*.analysis*.json
+*.runlog.json
+*.merge-map*.csv
+*.SHAREABLE.*
+*.RESTRICTED.*
+journal.jsonl
+cutover.json
+DECISIONS.log
+hil_blocklist.txt
+!examples/synthetic/**
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.coverage
+.DS_Store
+
+# Uebergabeordner der Cowork-Bruecke — kein Projektinhalt
+_incoming/
+_to_delete/
+
+# Uebergabe-Tarballs gehoeren nicht ins Repository
+*.tar.gz
+
+# Uebergabe-Archive der Cowork-Bruecke
+*.tgz
+*.zip
+
+# CI-Cache (PIP_CACHE_DIR in .gitlab-ci.yml)
+.pip-cache/
+
+# Coverage-Datenfiles (coverage.cfg -> data_file)
+.coverage-data*
+htmlcov/
+
+# P1-Abnahmeläufe tragen HEAD und eigene SHA256SUMS; keine Laufdaten im Produktcommit.
+/p1/runs/
+
+# P2-Abnahmeläufe tragen HEAD und eigene SHA256SUMS; keine Laufdaten im Produktcommit.
+/p2/runs/
+
+# P3-Abnahmeläufe tragen HEAD und eigene SHA256SUMS; keine Laufdaten im Produktcommit.
+/p3/runs/
+
+# P4a-Abnahmeläufe tragen HEAD und eigene SHA256SUMS.
+/p4a/runs/
+
+# P4b-Abnahmeläufe mit eigenem HEAD und SHA256SUMS.
+/p4b/runs/
+
+# P4c-Abnahmeläufe mit eigenem HEAD und SHA256SUMS.
+/p4c/runs/
+
+# Synthetische WALZ-Pilotnachweise, eigener Commit und Manifest.
+/p5/runs/

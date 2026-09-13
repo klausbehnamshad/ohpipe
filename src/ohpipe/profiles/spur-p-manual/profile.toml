@@ -1,0 +1,48 @@
+# Configuration example; inclusion does not authorize data processing.
+[profile]
+id = "spur-p-manual"
+record_prefix = "SPURP"
+record_digits = 3
+languages = ["de"]
+processing_routes = ["local"]
+coding_mode = "descriptive_l1"
+coverage_threshold = 0.75
+export_targets = ["webvtt", "json"]
+consent_vocabulary = ["research-only"]
+model_vocabulary = ["fixture:descriptive-l1"]
+production = false
+key_required = true
+pseudonymisation_required = true
+pii_detection = "manual"
+legacy_runtime = ""
+description = "Synthetic manual pseudonymisation with explicit review gates."
+pseudonymisation_policy_version = "spur-p-synthetic-v1"
+
+[profile.pseudonymisation_rules.PERSON]
+action = "pseudonym"
+scope = "spur-p-synthetic"
+entity_key = "opaque-entity-id"
+
+[profile.pseudonymisation_rules.ORGANISATION]
+action = "pseudonym"
+scope = "spur-p-synthetic"
+entity_key = "opaque-entity-id"
+
+[profile.pseudonymisation_rules.INSTITUTION]
+action = "pseudonym"
+scope = "spur-p-synthetic"
+entity_key = "opaque-entity-id"
+
+[profile.pseudonymisation_rules.LOCATION]
+action = "coarsen"
+value = "ORT"
+
+[profile.pseudonymisation_rules.DATE]
+action = "coarsen"
+value = "ZEITRAUM"
+
+[profile.pseudonymisation_rules.CONTACT]
+action = "remove"
+
+[profile.pseudonymisation_rules.IDENTIFIER]
+action = "remove"

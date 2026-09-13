@@ -1,0 +1,14 @@
+propertyID,block,valueDatatype,mandatory,repeatable,description,notes,pattern,enum
+record_id,A,string,TRUE,FALSE,Stable identifier for the record. Recommended format: YYYY-MM-DD_{INSTITUTION_CODE}_{NNNN}.,No pattern enforced at Core. Implementation Profiles impose institution-specific patterns.,,
+interview_date,A,date,TRUE,FALSE,Date of interview in ISO 8601 format (YYYY-MM-DD).,Approximate or compound dates deferred to Phase 2.,,
+interviewer,A,string,TRUE,FALSE,Name(s) of the interviewer(s). ORCID may follow the name in parentheses.,Multivalue interviewer records deferred to Phase 2.,,
+consent_status,A,string,TRUE,FALSE,GDPR-based consent category. Free string at Core; see vocabs/consent_status.md for recommended vocabulary.,"No enum enforced at Core. Implementation Profiles SHOULD specify a controlled vocabulary appropriate to their discipline and legal context.",,
+accessRights,A,string,TRUE,FALSE,Repository-level access rights. One of: open | restricted | closed.,"Cross-domain stable: used by OpenAIRE, Zenodo, DataCite.",,open|restricted|closed
+title,B,string,TRUE,FALSE,Interview title or descriptive label.,No length limit at Core. Profiles may impose constraints.,,
+interviewee_display,B,string,FALSE,FALSE,Pseudonym or display name for the interviewee. Core-level minimal speaker hook.,"Full speaker component (demographics, life-history data) deferred to Phase 2.",,
+language,B,string,TRUE,FALSE,ISO 639-3 three-letter language code (e.g. eng / deu / fra).,Single language only at Core. Multilingual interviews deferred to Phase 2.,,
+spatial,B,string,FALSE,FALSE,Place of interview. Free string at Core.,"No controlled list enforced at Core. Profiles SHOULD specify a vocabulary appropriate to their geographic scope.",,
+keywords,B,string,FALSE,TRUE,Subject keywords. Free string array at Core.,No controlled vocabulary enforced at Core. Profiles SHOULD specify one.,,
+abstract,B,string,FALSE,FALSE,"Short descriptive (non-analytic) summary, 2–3 sentences. Describes the interview as a research object, not its analytic interpretation.","See methodological-positions/abstracts.md and docs/README.md §7 for the descriptive-vs-analytic distinction.",,
+timecoded_segments,C,object,FALSE,TRUE,"Array of segment objects. Required sub-properties: start (HH:MM:SS), end (HH:MM:SS), label (string).","Transcription and analytic annotation (codes, memos, links) are outside Core scope — see crosswalks/qdpx.md.",,
+related_materials,C,string,FALSE,TRUE,URLs or persistent identifiers of related materials (transcripts; companion documents; derived files).,Recommend DOI or URL strings. No object structure imposed at Core; profiles may tighten.,,

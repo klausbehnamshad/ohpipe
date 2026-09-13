@@ -1,0 +1,57 @@
+{
+  "date": "2026-09-13",
+  "candidate_version": "0.1.0a1",
+  "scope": "Local experimental-preview checks; not a production or project-authorization certificate",
+  "environment": {
+    "system": "macOS arm64",
+    "python": "3.13.9",
+    "pytest": "9.1.1"
+  },
+  "full_suite": {
+    "command": "python -m pytest --ignore=tests/test_ollama_live.py",
+    "start_utc": "2026-09-13T11:06:17.884574+00:00",
+    "seconds": 379.51,
+    "exit_code": 1,
+    "counts": {
+      "passed": 2403,
+      "failed": 533,
+      "xfailed": 26
+    },
+    "junit_sha256": "d8fb4a2556c404decb6d33815c44ee5823c34e1859b2d39a7f3834eee52dfe5c",
+    "tested_input_manifest_sha256": "3b30fa0c40a10575879cb695dd7b206b0b0f24b6fa145ca9ff86df812fe6ac63",
+    "baseline_counts": {
+      "passed": 2371,
+      "failed": 533,
+      "xfailed": 26
+    },
+    "shared_outcome_changes": [],
+    "new_passing_tests": 32,
+    "protection_selection": {
+      "passed": 493
+    }
+  },
+  "confirmation_window": {
+    "tests": 20,
+    "scope": "Authenticated prompt/lock interleavings, separate process, competing plans, valid and exact-retry counterexamples"
+  },
+  "ported_test_setup": {
+    "tests": 7,
+    "scope": "Relational-intent tests now prepare valid authenticated state; deterministic and mutation counterchecks retained"
+  },
+  "storage_placement": {
+    "tests": 12,
+    "scope": "Current store/config/key separation with valid configuration counterexample"
+  },
+  "synthetic_demo": {
+    "stations": 48,
+    "inference": "recorded fixture responses"
+  },
+  "known_limitations": {
+    "historical_contract_failures": 533,
+    "historical_pseudonymisation_xfails": 25,
+    "operator_guidance_xfails": 1,
+    "hosted_github_ci": "not yet run",
+    "general_retry_intent_workflow": "not delivered"
+  },
+  "measurement_note": "Version, citation and validation/documentation metadata were finalized after the full suite. Executable code and test inputs were unchanged; final packages are checked separately."
+}

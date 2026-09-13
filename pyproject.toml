@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ohpipe"
+version = "0.1.0a1"
+description = "Oral history pipeline: generic core, project profiles, human-in-the-loop governance"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Klaus Behnam Shad" }]
+dependencies = ["cryptography==50.0.1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff==0.16.1", "pyyaml>=6"]
+
+[project.scripts]
+ohpipe = "ohpipe.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ohpipe = ["profiles/*/*.toml", "profiles/README.md", "schemas/metadata/*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# AUSDRUECKLICH ausgewaehlt statt Ruff-Vorgabe.
+#
+# Der lint-Job wurde rot, ohne dass sich eine Codezeile geaendert hatte: Ruff
+# 0.16 erweiterte den Vorgabe-Regelsatz. Drei Rechner, drei Versionen (0.12.0
+# lokal, 0.15.11 im Container, 0.16.1 in der CI) — und nur einer sah die
+# Verstoesse. Ein Werkzeug ohne feste Version und ohne festen Regelsatz ist
+# in einem Projekt, dessen Argument Belegdisziplin ist, die falsche Art von
+# Offenheit.
+#
+# B und SIM stehen hier, weil genau sie zwei ECHTE Fehler gefunden haben:
+# ein `return` im `finally` (verschluckt Ausnahmen) und eine Zusicherung, die
+# nie fehlschlagen konnte. Die Runde hat sich also gelohnt.
+# RUF ist bewusst NICHT dabei: RUF001/RUF002 halten den Gedankenstrich in
+# deutschen Docstrings und die Unicode-Zeilentrenner in `cue.LINE_BREAKING`
+# fuer Tippfehler. Beide sind Absicht, und ein Linter, gegen den man staendig
+# argumentiert, wird irgendwann abgeschaltet.
+select = ["E4", "E7", "E9", "F", "UP", "B", "SIM"]
+
+# UP017 schreibt `timezone.utc` zu `datetime.UTC` um — eine 3.11-only-Form ohne
+# Gegenwert. Der Autofix hat das einmal unbemerkt getan; ein ImportError auf
+# einem 3.10-Interpreter ist eine schlechtere Fehlermeldung als eine klare
+# Versionsprüfung.
+# UP042 will `class X(str, Enum)` zu `StrEnum` machen. Das ist keine reine
+# Schreibweise: `str()` liefert bei den beiden Formen Verschiedenes, und die
+# Werte dieser Enums stehen im Journal und in der JSON-Ausgabe. Eine
+# Umstellung gehoert geprueft, nicht autofixiert — solange das nicht passiert
+# ist, ist die stillere Variante die richtige.
+ignore = ["UP017", "UP042"]

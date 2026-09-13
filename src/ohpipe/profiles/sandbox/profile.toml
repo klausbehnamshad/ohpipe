@@ -1,0 +1,21 @@
+# Configuration example; inclusion does not authorize data processing.
+[profile]
+id = "sandbox"
+record_prefix = "SANDBOX"
+record_digits = 3
+languages = ["de", "fr", "lb", "pt"]
+processing_routes = ["local"]
+coding_mode = "descriptive_l1"
+coverage_threshold = 0.75
+export_targets = ["webvtt", "json"]
+consent_vocabulary = ["research-only", "public"]
+description = "Synthetic fixture profile. Use invented demonstration material only."
+
+model_vocabulary = ["fixture:descriptive-l1", "mistral:7b-instruct"]
+
+key_required = false
+
+pseudonymisation_required = false
+production = false
+
+legacy_runtime = ""

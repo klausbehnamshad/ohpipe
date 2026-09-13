@@ -1,0 +1,21 @@
+# Configuration example; inclusion does not authorize data processing.
+[profile]
+id = "childlux"
+record_prefix = "CHILDLUX"
+record_digits = 4
+languages = ["de", "fr", "lb", "en"]
+processing_routes = ["local"]
+coding_mode = "descriptive_l1"
+coverage_threshold = 0.90
+export_targets = ["webvtt", "json"]
+consent_vocabulary = ["research-only", "teaching", "public", "embargoed"]
+description = "Legacy compatibility profile; model-based pseudonymisation is not implemented."
+key_required = true
+
+pseudonymisation_required = true
+pii_detection = "model"
+production = true
+
+model_vocabulary = []
+
+legacy_runtime = "dinoh"

@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, cite the exact version or commit used."
+title: "OHPIPE: Oral History Pipeline"
+type: software
+authors:
+  - family-names: "Behnam Shad"
+    given-names: "Klaus"
+repository-code: "https://github.com/klausbehnamshad/ohpipe"
+license: MIT
+abstract: "An experimental oral-history workflow with descriptive proposals, human review and versioned evidence. Bundled metadata resources have separate CC-BY-4.0 attribution."
+version: "0.1.0a1"

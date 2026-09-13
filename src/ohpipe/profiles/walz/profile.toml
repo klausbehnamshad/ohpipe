@@ -1,0 +1,22 @@
+# Configuration example; inclusion does not authorize data processing.
+[profile]
+id = "walz"
+record_prefix = "WALZ"
+record_digits = 4
+languages = ["de", "fr", "lb", "en"]
+processing_routes = ["local"]
+coding_mode = "descriptive_l1"
+codebook = ""
+coverage_threshold = 0.90
+export_targets = ["webvtt", "json"]
+consent_vocabulary = ["research-only", "teaching", "public", "embargoed"]
+description = "Legacy compatibility profile without a pseudonymisation gate; not a generic project configuration."
+
+model_vocabulary = ["mistral:7b-instruct"]
+
+key_required = true
+
+pseudonymisation_required = false
+production = true
+
+legacy_runtime = ""

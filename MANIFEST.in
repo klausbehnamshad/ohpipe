@@ -1,0 +1,9 @@
+include LICENSE README.md CITATION.cff CHANGELOG.md SECURITY.md CONTRIBUTING.md THIRD_PARTY_NOTICES.md
+recursive-include src/ohpipe/schemas/metadata *
+recursive-include examples/synthetic *
+recursive-include tests *.py *.json *.md
+recursive-include tools *.py
+recursive-include docs *.md *.json
+include .github/workflows/ci.yml
+include VALIDATION.json
+include coverage.cfg

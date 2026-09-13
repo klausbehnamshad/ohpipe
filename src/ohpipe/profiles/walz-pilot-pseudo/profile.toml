@@ -1,0 +1,43 @@
+# Configuration example; inclusion does not authorize data processing.
+[profile]
+id = "walz-pilot-pseudo"
+record_prefix = "WALZ"
+record_digits = 4
+languages = ["de", "fr", "lb", "en"]
+processing_routes = ["local"]
+coding_mode = "descriptive_l1"
+codebook = ""
+coverage_threshold = 0.90
+export_targets = ["webvtt", "json"]
+consent_vocabulary = ["research-only", "teaching", "public", "embargoed"]
+model_vocabulary = ["mistral:7b-instruct"]
+production = true
+key_required = true
+pseudonymisation_required = true
+pii_detection = "manual"
+legacy_runtime = ""
+description = "Historical manual-profile configuration retained for compatibility tests; no project authorization is conveyed."
+pseudonymisation_policy_version = "walz-pilot-proposal-v1"
+
+[profile.pseudonymisation_rules.PERSON]
+action = "pseudonym"
+scope = "walz-pilot-pseudo"
+entity_key = "opaque-entity-id"
+
+[profile.pseudonymisation_rules.ORGANISATION]
+action = "keep"
+
+[profile.pseudonymisation_rules.INSTITUTION]
+action = "keep"
+
+[profile.pseudonymisation_rules.LOCATION]
+action = "keep"
+
+[profile.pseudonymisation_rules.DATE]
+action = "keep"
+
+[profile.pseudonymisation_rules.CONTACT]
+action = "remove"
+
+[profile.pseudonymisation_rules.IDENTIFIER]
+action = "remove"
